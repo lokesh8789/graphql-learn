@@ -1,0 +1,22 @@
+type Query {
+    sayHello: String
+    printHello: String
+    sayHelloTo(name: String!): String
+    random: Int!
+    customers: [Customer]
+    customerById(id: ID!): Customer
+    customersNameContains(name: String!): [Customer]
+    customersByAgeRange(filter: AgeRangeFilter!): [Customer]!
+}
+
+input AgeRangeFilter {
+    minAge: Int!
+    maxAge: Int!
+}
+
+type Customer {
+    id: ID
+    name: String
+    age: Int
+    city: String
+}
