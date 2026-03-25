@@ -103,4 +103,9 @@ public class UserController {
         log.info("Fetching user orders");
         return ordersByUsersUsingMap(users);
     }
+
+//    @SchemaMapping(typeName = "User")  // Overriding a field -> age
+//    public Mono<Integer> age() {
+//        return Mono.just(100);
+//    }
 }
