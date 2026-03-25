@@ -9,6 +9,8 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -58,6 +60,15 @@ public class UserController {
                 );
     }
 
+    private Mono<Map<User, List<Order>>> ordersByUsersUsingMap(List<User> users) {
+        return Flux.fromIterable(users)
+                .map(user -> Tuples.of(user, map.getOrDefault(user.name(), Collections.emptyList())))
+                .collectMap(
+                        Tuple2::getT1,
+                        Tuple2::getT2
+                );
+    }
+
     @SchemaMapping(typeName = "Query")
 //    @QueryMapping
     public Flux<User> users() {
@@ -75,15 +86,21 @@ public class UserController {
         return ordersByUserName(user.name());
     }*/
 
-    @BatchMapping(typeName = "User") // N+1 problem fix
+    /*@BatchMapping(typeName = "User") // List Way // N+1 problem fix
     public Flux<List<Order>> orders(List<User> users) {
         log.info("Fetching Order for users");
         return ordersByUsers(users.stream().map(User::name).toList());
-    }
+    }*/
 
     /*@BatchMapping(typeName = "User")
     public Flux<List<Order>> orders(List<User> users) {
         log.info("Fetching Order For users");
         return ordersByUsers2(users.stream().map(User::name).toList());
     }*/
+
+    @BatchMapping(typeName = "User") // Map Way
+    public Mono<Map<User, List<Order>>> orders(List<User> users) {
+        log.info("Fetching user orders");
+        return ordersByUsersUsingMap(users);
+    }
 }
