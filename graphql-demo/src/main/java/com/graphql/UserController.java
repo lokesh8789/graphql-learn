@@ -71,11 +71,11 @@ public class UserController {
                 );
     }
 
-//    @SchemaMapping(typeName = "Query")
-////    @QueryMapping
-//    public Flux<User> users() {
-//        return userFlux;
-//    }
+    @SchemaMapping(typeName = "Query")
+//    @QueryMapping
+    public Flux<User> users() {
+        return userFlux;
+    }
 
     /*@SchemaMapping(typeName = "User")
     public Flux<Order> orders(User user) {
