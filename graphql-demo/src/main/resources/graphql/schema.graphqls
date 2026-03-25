@@ -7,6 +7,7 @@ type Query {
     customerById(id: ID!): Customer
     customersNameContains(name: String!): [Customer]
     customersByAgeRange(filter: AgeRangeFilter!): [Customer]!
+    users: [User]
 }
 
 input AgeRangeFilter {
@@ -19,4 +20,17 @@ type Customer {
     name: String
     age: Int
     city: String
+}
+
+type User {
+    id: ID
+    name: String
+    age: Int
+    city: String
+    orders: [Order]!
+}
+
+type Order {
+    id: ID!
+    description: String
 }
