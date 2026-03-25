@@ -3,15 +3,19 @@ package com.graphql;
 import com.graphql.dto.Order;
 import com.graphql.dto.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Controller
@@ -41,20 +45,45 @@ public class UserController {
         return Flux.fromIterable(map.getOrDefault(name, Collections.emptyList()));
     }
 
+    private Flux<List<Order>> ordersByUsers(List<String> names) {
+        return Flux.fromIterable(names)
+                .map(name -> map.getOrDefault(name, Collections.emptyList()));
+    }
+
+    private Flux<List<Order>> ordersByUsers2(List<String> names) {
+        return Flux.fromIterable(names)
+                .flatMapSequential(s -> Mono.justOrEmpty(map.get(s))
+                        .delayElement(Duration.ofMillis(ThreadLocalRandom.current().nextInt(1, 100)))
+                        .defaultIfEmpty(List.of())
+                );
+    }
+
     @SchemaMapping(typeName = "Query")
 //    @QueryMapping
     public Flux<User> users() {
         return userFlux;
     }
 
-    @SchemaMapping(typeName = "User")
+    /*@SchemaMapping(typeName = "User")
     public Flux<Order> orders(User user) {
         log.info("Fetching Order for user: {}", user.name());
         return ordersByUserName(user.name());
-    }
+    }*/
 
    /* @SchemaMapping(typeName = "User", field = "orders")
     public Flux<Order> orders(User user) {
         return ordersByUserName(user.name());
+    }*/
+
+    @BatchMapping(typeName = "User") // N+1 problem fix
+    public Flux<List<Order>> orders(List<User> users) {
+        log.info("Fetching Order for users");
+        return ordersByUsers(users.stream().map(User::name).toList());
+    }
+
+    /*@BatchMapping(typeName = "User")
+    public Flux<List<Order>> orders(List<User> users) {
+        log.info("Fetching Order For users");
+        return ordersByUsers2(users.stream().map(User::name).toList());
     }*/
 }
