@@ -5,7 +5,7 @@ type Query {
     random: Int!
     customers: [Customer]
     customerById(id: ID!): Customer
-    customersNameContains(name: String!): [Customer]
+    customersNameContains(name: String!): [Customer] @deprecated(reason: "being deprecated")
     customersByAgeRange(filter: AgeRangeFilter!): [Customer]!
     users: [User]
 }
