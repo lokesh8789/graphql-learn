@@ -21,16 +21,3 @@ type Customer {
     age: Int
     city: String
 }
-
-type User {
-    id: ID
-    name: String
-    age: Int
-    city: String
-    orders: [Order]!
-}
-
-type Order {
-    id: ID!
-    description: String
-}
