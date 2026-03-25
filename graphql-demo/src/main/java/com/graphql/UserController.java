@@ -2,6 +2,8 @@ package com.graphql;
 
 import com.graphql.dto.Order;
 import com.graphql.dto.User;
+import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.DataFetchingFieldSelectionSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -69,11 +71,11 @@ public class UserController {
                 );
     }
 
-    @SchemaMapping(typeName = "Query")
-//    @QueryMapping
-    public Flux<User> users() {
-        return userFlux;
-    }
+//    @SchemaMapping(typeName = "Query")
+////    @QueryMapping
+//    public Flux<User> users() {
+//        return userFlux;
+//    }
 
     /*@SchemaMapping(typeName = "User")
     public Flux<Order> orders(User user) {
@@ -107,5 +109,17 @@ public class UserController {
 //    @SchemaMapping(typeName = "User")  // Overriding a field -> age
 //    public Mono<Integer> age() {
 //        return Mono.just(100);
+//    }
+
+//    @SchemaMapping(typeName = "Query")
+//    public Flux<User> users(DataFetchingFieldSelectionSet selectionSet) {
+//        log.info("SelectionSet: {}", selectionSet.getFields());
+//        return userFlux;
+//    }
+
+//    @SchemaMapping(typeName = "Query")
+//    public Flux<User> users(DataFetchingEnvironment dataFetchingEnvironment) {
+//        log.info("DataFetchingEnvironment: {}", dataFetchingEnvironment.getDocument());
+//        return userFlux;
 //    }
 }
